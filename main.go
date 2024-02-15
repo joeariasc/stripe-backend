@@ -23,7 +23,12 @@ func main() {
 
 	r := router.Router()
 
-	fmt.Println("Starting server on the port 3000...")
+	port := os.Getenv("PORT")
 
-	log.Fatal(http.ListenAndServe(":3000", r))
+	if port == "" {
+		port = "8080"
+	}
+	fmt.Printf("Starting server on the port %s...\n", port)
+
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), r))
 }
