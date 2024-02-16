@@ -14,9 +14,11 @@ func main() {
 
 	err := godotenv.Load(".env")
 
-	if err != nil {
+	if err != nil && !os.IsNotExist(err) {
 		fmt.Println(err.Error())
 		log.Fatalf("Error loading .env file")
+	} else {
+		fmt.Println("Running without a .env file. Assuming environment variables are set.")
 	}
 
 	// This is your test secret API key.
