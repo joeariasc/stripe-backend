@@ -7,7 +7,10 @@ import (
 	"github.com/stripe/stripe-go/v76/paymentintent"
 	"io"
 	"log"
+	"math"
 	"net/http" // used to access the request and response object of the api
+	"strconv"
+
 	// package used to read the .env file
 	_ "github.com/lib/pq" // postgres golang driver
 )
@@ -16,6 +19,10 @@ import (
 type response struct {
 	ID      int64  `json:"id,omitempty"`
 	Message string `json:"message,omitempty"`
+}
+
+type item struct {
+	Id string `json:"id"`
 }
 
 // GetTest will return all the users
@@ -32,19 +39,33 @@ func GetTest(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleCreatePaymentIntent(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "POST")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-
 	if r.Method != "POST" {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
 	}
 
+	var req struct {
+		Items  []item `json:"items"`
+		Amount string `json:"amount"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Printf("Error decoding request body: %v", err)
+		return
+	}
+
+	dollarAmount, errConver := strconv.ParseFloat(req.Amount, 64)
+
+	if errConver != nil {
+		log.Fatalf("Unable to convert the string into int.  %v", errConver)
+	}
+
+	centsAmount := int(math.Round(dollarAmount * 100))
+
 	// Create a PaymentIntent with amount and currency
-	params := &stripe.PaymentIntentParams{
-		Amount:   stripe.Int64(50),
+	stripeParams := &stripe.PaymentIntentParams{
+		Amount:   stripe.Int64(int64(centsAmount)),
 		Currency: stripe.String(string(stripe.CurrencyUSD)),
 		// In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
 		AutomaticPaymentMethods: &stripe.PaymentIntentAutomaticPaymentMethodsParams{
@@ -52,7 +73,7 @@ func HandleCreatePaymentIntent(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	pi, err := paymentintent.New(params)
+	pi, err := paymentintent.New(stripeParams)
 	log.Printf("pi.New: %v", pi.ClientSecret)
 
 	if err != nil {
