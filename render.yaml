@@ -6,7 +6,7 @@ services:
     repo: https://github.com/joeariasc/stripe-backend
     scaling:
       minInstances: 1
-      maxInstances: 1
+      maxInstances: 2
       targetMemoryPercent: 60
       targetCPUPercent: 60
     buildCommand: go build -o app
@@ -14,5 +14,5 @@ services:
     domains:
       - stripe-wwco-service.render.com
     envVars:
-        - key: STRIPE_SECRET_KEY
-          value: sk_test_51OgVTmH7FzagETwqa9z7sGNWcIg5OoMHyIKntsygn3FtmRgUEqXSR0B9S3gvmCClBPWwu2Rdq2M5YhrDgvdoDAIg00MvbZcZvr
+      - key: STRIPE_SECRET_KEY
+        value: sk_test_51OgVTmH7FzagETwqa9z7sGNWcIg5OoMHyIKntsygn3FtmRgUEqXSR0B9S3gvmCClBPWwu2Rdq2M5YhrDgvdoDAIg00MvbZcZvr
