@@ -7,8 +7,8 @@ services:
     scaling:
       minInstances: 1
       maxInstances: 3
-    #targetMemoryPercent: 60
-    #targetCPUPercent: 60
+    targetMemoryPercent: 60
+    targetCPUPercent: 60
     buildCommand: go build -o app
     startCommand: ./app
     domains:
