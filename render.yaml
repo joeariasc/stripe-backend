@@ -4,11 +4,9 @@ services:
     name: stripe
     runtime: go
     repo: https://github.com/joeariasc/stripe-backend
-    scaling:
-      minInstances: 1
-      maxInstances: 2
-      targetMemoryPercent: 60
-      targetCPUPercent: 60
+    region: oregon
+    plan: standard
+    branch: main
     buildCommand: go build -o app
     startCommand: ./app
     domains:
