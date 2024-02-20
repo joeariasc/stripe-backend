@@ -11,6 +11,3 @@ services:
     healthCheckPath: /api/test
     buildCommand: go build -o app
     startCommand: ./app
-    envVars:
-      - key: STRIPE_SECRET_KEY
-        value: sk_test_51OgVTmH7FzagETwqa9z7sGNWcIg5OoMHyIKntsygn3FtmRgUEqXSR0B9S3gvmCClBPWwu2Rdq2M5YhrDgvdoDAIg00MvbZcZvr
